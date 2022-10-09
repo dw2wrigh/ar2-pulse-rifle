@@ -8,13 +8,15 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "C:/Users/dw2wrigh/GitLocal/ar2-pulse-rifle/include",
-                "C:/Users/dw2wrigh/GitLocal/ar2-pulse-rifle/src",
+                "c:/Users/dw2wrigh/GitLocal/ar2-pulse-rifle/include",
+                "c:/Users/dw2wrigh/GitLocal/ar2-pulse-rifle/src",
+                "c:/Users/dw2wrigh/GitLocal/ar2-pulse-rifle/.pio/libdeps/micro/PCM",
+                "c:/Users/dw2wrigh/GitLocal/ar2-pulse-rifle/.pio/libdeps/micro/SD",
+                "C:/Users/dw2wrigh/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
                 "C:/Users/dw2wrigh/.platformio/packages/framework-arduino-avr/cores/arduino",
                 "C:/Users/dw2wrigh/.platformio/packages/framework-arduino-avr/variants/micro",
                 "C:/Users/dw2wrigh/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
                 "C:/Users/dw2wrigh/.platformio/packages/framework-arduino-avr/libraries/HID/src",
-                "C:/Users/dw2wrigh/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
                 "C:/Users/dw2wrigh/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
                 "C:/Users/dw2wrigh/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
                 ""
@@ -22,13 +24,15 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "C:/Users/dw2wrigh/GitLocal/ar2-pulse-rifle/include",
-                    "C:/Users/dw2wrigh/GitLocal/ar2-pulse-rifle/src",
+                    "c:/Users/dw2wrigh/GitLocal/ar2-pulse-rifle/include",
+                    "c:/Users/dw2wrigh/GitLocal/ar2-pulse-rifle/src",
+                    "c:/Users/dw2wrigh/GitLocal/ar2-pulse-rifle/.pio/libdeps/micro/PCM",
+                    "c:/Users/dw2wrigh/GitLocal/ar2-pulse-rifle/.pio/libdeps/micro/SD",
+                    "C:/Users/dw2wrigh/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
                     "C:/Users/dw2wrigh/.platformio/packages/framework-arduino-avr/cores/arduino",
                     "C:/Users/dw2wrigh/.platformio/packages/framework-arduino-avr/variants/micro",
                     "C:/Users/dw2wrigh/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
                     "C:/Users/dw2wrigh/.platformio/packages/framework-arduino-avr/libraries/HID/src",
-                    "C:/Users/dw2wrigh/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
                     "C:/Users/dw2wrigh/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
                     "C:/Users/dw2wrigh/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
                     ""
