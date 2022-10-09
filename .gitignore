@@ -32,15 +32,7 @@
 *.app
 
 # PlatformIO
-.pioenvs/*
-.piolibdeps/*
-.clang_complete/*
-.gcc-flags.json
-.pio/*
+.pio
 
 # VS Code
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+.vscode
