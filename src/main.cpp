@@ -9,19 +9,46 @@
 #define TRIGGER1_IN 1
 #define TRIGGER2_IN 2
 #define TRIGGER3_IN 3
+#define DEBOUNCE_TIME 50
 
 TMRpcm tmrpcm; // Create an object for use in this sketch
 boolean toggle = false;
-// ButtonDebounce button(10, 250);
+ButtonDebounce trigger1(TRIGGER1_IN, DEBOUNCE_TIME);
+ButtonDebounce trigger2(TRIGGER2_IN, DEBOUNCE_TIME);
+ButtonDebounce trigger3(TRIGGER3_IN, DEBOUNCE_TIME);
+
+void trigger1Callback(int state) {
+  if (state == LOW)
+  {
+    tmrpcm.stopPlayback();
+    // Do something
+  }
+}
+
+void trigger2Callback(int state) {
+  if (state == LOW)
+  {
+    tmrpcm.stopPlayback();
+    // Do something
+  }
+}
+
+void trigger3Callback(int state) {
+  if (state == LOW)
+  {
+    tmrpcm.stopPlayback();
+    // Do something
+  }
+}
 
 void setup()
 {
 
   pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(LED_BUILTIN, INPUT_PULLUP); // Active Low
-  pinMode(LED_BUILTIN, INPUT_PULLUP); // Active Low
-  pinMode(LED_BUILTIN, INPUT_PULLUP); // Active Low
   tmrpcm.speakerPin = SPEAKER_OUT;
+  trigger1.setCallback(trigger1Callback);
+  trigger2.setCallback(trigger2Callback);
+  trigger3.setCallback(trigger3Callback);
   //tmrpcm.setVolume(4);
 
   Serial.begin(9600);
@@ -36,6 +63,10 @@ void setup()
 
 void loop()
 {
+  trigger1.update();
+  trigger2.update();
+  trigger3.update();
+
   // delay(1000);
   // if (Serial.available())
   // {
@@ -48,10 +79,3 @@ void loop()
   // digitalWrite(LED_BUILTIN, toggle);
   // tone(9, 440, 500);
 }
-
-// void loop() {
-//   button.update();
-//   if(button.state() == HIGH){
-//     Serial.println("Clicked");
-//   }
-// }
