@@ -12,7 +12,7 @@
 #define SPEAKER_OUT 9
 #define BARREL_LED 10
 #define DEBOUNCE_TIME 50
-#define COMBINE_SOLDIER_DIR "/COMBIN~1/VO/"
+#define COMBINE_SOLDIER_DIR "/cs/"
 #define METRO_POLICE_DIR "/METROP~1/VO/"
 #define OVERWATCH_CV_DIR "/OVERWA~1/CITYVO~1/"
 #define OVERWATCH_RV_DIR "/OVERWA~1/RADIOV~1/"
@@ -186,7 +186,7 @@ void setup()
   button1.setCallback(button1Callback); // This sets the button1Callback function to be called whenver the trigger changes state
   button2.setCallback(button2Callback); // This sets the button2Callback function to be called whenver the trigger changes state
   button3.setCallback(button3Callback); // This sets the button3Callback function to be called whenver the trigger changes state
-  tmrpcm.setVolume(1); // Sets the volume (0 to 7)
+  // tmrpcm.setVolume(7); // Sets the volume (0 to 7)
 
   Serial.begin(9600); // Opens the serial port which is how you can type to the Arduino and it can respond
   delay(1000);
@@ -200,7 +200,7 @@ void setup()
   // combine_soldier_dir = SD.open(COMBINE_SOLDIER_DIR);
   // printDirectory(combine_soldier_dir, 0);
   String tempString(COMBINE_SOLDIER_DIR);
-  tempString.concat("PRISON~1.wav");
+  tempString.concat("cs_0001.wav");
   tmrpcm.play(tempString.c_str()); // This sound file will play each time the arduino powers up or is reset
 }
 
