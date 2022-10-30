@@ -3,20 +3,38 @@
 #include <TMRpcm.h> // also need to include this library...
 #include <SPI.h>
 #include <ButtonDebounce.h>
+#include <ButtonDebounce.h>
 
 #define SD_CARD_CS 4
-#define TRIGGER_IN 5 // Note that trigger and buttons are active low (1 = not pressed, 0 = pressed)
-#define BUTTON1_IN 6
-#define BUTTON2_IN 8
-#define BUTTON3_IN 7
+#define TRIGGER_IN 7 // Note that trigger and buttons are active low (1 = not pressed, 0 = pressed)
+#define BUTTON1_IN 8
+#define BUTTON2_IN 6
+#define BUTTON3_IN 5
 #define SPEAKER_OUT 9
 #define BARREL_LED 10
 #define DEBOUNCE_TIME 50
 #define COMBINE_SOLDIER_DIR "/cs/"
-#define METRO_POLICE_DIR "/METROP~1/VO/"
-#define OVERWATCH_CV_DIR "/OVERWA~1/CITYVO~1/"
-#define OVERWATCH_RV_DIR "/OVERWA~1/RADIOV~1/"
-#define AR2_DIR "/WEAPONS/AR2/"
+#define METRO_POLICE_DIR "/mp/"
+#define OVERWATCH_CV_DIR "/ow/city/"
+#define OVERWATCH_RV_DIR "/ow/radio/"
+#define AR2_DIR "/ar2/"
+#define CS_MAX 233
+#define MP_MAX 324
+#define OWC_MAX 46
+#define OWR_MAX 180
+
+typedef enum StateChanges
+{
+  NONE,            // Nothing has changed
+  TRIGGER_PRESS,   // Ready to fire
+  TRIGGER_RELEASE, // Fire sequence
+  BUTTON1_PRESS,   // Button 1 pressed
+  BUTTON1_RELEASE, // Button 1 released
+  BUTTON2_PRESS,   // Button 2 pressed
+  BUTTON2_RELEASE, // Button 2 released
+  BUTTON3_PRESS,   // Button 3 pressed
+  BUTTON3_RELEASE  // Button 3 released
+} States;
 
 File combine_soldier_dir;
 TMRpcm tmrpcm; // Create an object for use in this sketch
@@ -26,159 +44,91 @@ ButtonDebounce button2(BUTTON2_IN, DEBOUNCE_TIME);
 ButtonDebounce button3(BUTTON3_IN, DEBOUNCE_TIME);
 bool toggle = false;
 bool stateChange = false; // Indicate a state change to the main code
+States currentState = NONE;
+
+String getFileName(String directory, String filePrefix, int fileNumber)
+{
+  String tempString(directory);
+  tempString.concat(filePrefix);
+  tempString.concat("_");
+  char fileNumberStr[5];
+  snprintf(fileNumberStr, 5, "%04d", fileNumber);
+  tempString.concat(fileNumberStr);
+  tempString.concat(".wav");
+  return tempString;
+}
+
+String getFileName(String directory, String filePrefix)
+{
+  String tempString(directory);
+  tempString.concat(filePrefix);
+  tempString.concat(".wav");
+  return tempString;
+}
 
 void triggerCallback(int state)
 {
   stateChange = true;
-  Serial.print("Trigger ");
-  Serial.println(state);
-
+  // Serial.print("Trigger ");
+  // Serial.println(state);
   if (state == LOW) // Trigger changed state and is pressed
   {
-    // Do something
-    if (tmrpcm.isPlaying()) // Check if audio is currently playing
-    {
-      tmrpcm.stopPlayback();
-    }
-    tmrpcm.play("tp.wav");
+    currentState = TRIGGER_PRESS;
   }
   else // Trigger changed state and is not pressed
   {
-    // Do something
-    if (tmrpcm.isPlaying()) // Check if audio is currently playing
-    {
-      tmrpcm.stopPlayback();
-    }
-    tmrpcm.play("tr.wav");
+    currentState = TRIGGER_RELEASE;
   }
 }
 
 void button1Callback(int state)
 {
   stateChange = true;
-  Serial.print("Button1 ");
-  Serial.println(state);
+  // Serial.print("Button1 ");
+  // Serial.println(state);
   if (state == LOW) // Button changed state and is pressed
   {
-    // Do something
-    if (tmrpcm.isPlaying()) // Check if audio is currently playing
-    {
-      tmrpcm.stopPlayback(); // Stop whatever is playing
-    }
-    tmrpcm.play("b1p.wav");
+    currentState = BUTTON1_PRESS;
   }
   else // Button changed state and is not pressed
   {
-    // Do something
-    if (tmrpcm.isPlaying()) // Check if audio is currently playing
-    {
-      tmrpcm.stopPlayback(); // Stop whatever is playing
-    }
-    tmrpcm.play("b1r.wav");
+    currentState = BUTTON1_RELEASE;
   }
 }
 
 void button2Callback(int state)
 {
   stateChange = true;
-  Serial.print("Button2 ");
-  Serial.println(state);
+  // Serial.print("Button2 ");
+  // Serial.println(state);
   if (state == LOW) // Button changed state and is pressed
   {
-    // Do something
-    if (tmrpcm.isPlaying()) // Check if audio is currently playing
-    {
-      tmrpcm.stopPlayback(); // Stop whatever is playing
-    }
-    tmrpcm.play("b2p.wav");
+    currentState = BUTTON2_PRESS;
   }
   else // Button changed state and is not pressed
   {
-    // Do something
-    if (tmrpcm.isPlaying()) // Check if audio is currently playing
-    {
-      tmrpcm.stopPlayback(); // Stop whatever is playing
-    }
-    tmrpcm.play("b2r.wav");
+    currentState = BUTTON2_RELEASE;
   }
 }
 
 void button3Callback(int state)
 {
   stateChange = true;
-  Serial.print("Button3 ");
-  Serial.println(state);
+  // Serial.print("Button3 ");
+  // Serial.println(state);
   if (state == LOW) // Button changed state and is pressed
   {
-    // Do something
-    if (tmrpcm.isPlaying()) // Check if audio is currently playing
-    {
-      tmrpcm.stopPlayback(); // Stop whatever is playing
-    }
-    tmrpcm.play("b3p.wav");
+    currentState = BUTTON3_PRESS;
   }
   else // Button changed state and is not pressed
   {
-    // Do something
-    if (tmrpcm.isPlaying()) // Check if audio is currently playing
-    {
-      tmrpcm.stopPlayback(); // Stop whatever is playing
-    }
-    tmrpcm.play("b3r.wav");
-  }
-}
-
-void printDirectory(File dir, int numTabs)
-{
-  while (true)
-  {
-    File entry = dir.openNextFile();
-    if (!entry)
-    {
-      // no more files
-      break;
-    }
-    for (uint8_t i = 0; i < numTabs; i++)
-    {
-      Serial.print('\t');
-    }
-    Serial.print(entry.name());
-    if (entry.isDirectory())
-    {
-      Serial.println("/");
-      printDirectory(entry, numTabs + 1);
-    }
-    else
-    {
-      // files have sizes, directories do not
-      Serial.print("\t\t");
-      Serial.println(entry.size(), DEC);
-    }
-    entry.close();
-  }
-}
-
-int numFiles(File dir)
-{
-  int count = 0;
-  while (true)
-  {
-    File entry = dir.openNextFile();
-    if (!entry) // No more files
-    {
-      break;
-    }
-    if (!entry.isDirectory()) // Don't count subdirectories
-    {
-      count++;
-    }
-    entry.close();
-    return count;
+    currentState = BUTTON3_RELEASE;
   }
 }
 
 void setup()
 {
+  randomSeed(analogRead(0)); // Seeds the pseudorandom number generator with a random voltage from the uncommected A0 analog pin
   pinMode(BARREL_LED, OUTPUT);
   tmrpcm.speakerPin = SPEAKER_OUT; // This tells the tmrpcm object which pin the amplifier is connected to (Pin 9)
   tmrpcm.quality(true);
@@ -189,7 +139,7 @@ void setup()
   // tmrpcm.setVolume(7); // Sets the volume (0 to 7)
 
   Serial.begin(9600); // Opens the serial port which is how you can type to the Arduino and it can respond
-  delay(1000);
+  delay(100);
   Serial.println("Welcome to AR2 Pulse Rifle!");
 
   if (!SD.begin(SD_CARD_CS)) // SD.begin tries to initialize the SD card for access. It returns true when it is properly initialized, and false when it fails, so !SD.begin is true when it fails
@@ -197,10 +147,7 @@ void setup()
     Serial.println("SD card initialization failed.");
   }
 
-  // combine_soldier_dir = SD.open(COMBINE_SOLDIER_DIR);
-  // printDirectory(combine_soldier_dir, 0);
-  String tempString(COMBINE_SOLDIER_DIR);
-  tempString.concat("cs_0001.wav");
+  String tempString = getFileName(COMBINE_SOLDIER_DIR, String("cs"), random(CS_MAX) + 1);
   tmrpcm.play(tempString.c_str()); // This sound file will play each time the arduino powers up or is reset
 }
 
@@ -212,21 +159,62 @@ void loop()
   button2.update();
   button3.update();
 
+  // This code block lets you do something when there's a trigger/button state change
   if (stateChange)
   {
-    digitalWrite(BARREL_LED, !trigger.state());
+    switch (currentState)
+    {
+    case TRIGGER_PRESS:
+      // Do something
+      tmrpcm.stopPlayback(); // Stop whatever it's playing to begin firing and reloading
+      digitalWrite(BARREL_LED, HIGH);
+      break;
+
+    case TRIGGER_RELEASE:
+      // Do something
+      digitalWrite(BARREL_LED, LOW);
+      break;
+
+    case BUTTON1_PRESS:
+      // Do something
+      // Play altfire charging sound
+      break;
+
+    case BUTTON1_RELEASE:
+      // Do something
+      // Play altfire firing sound
+      break;
+
+    case BUTTON2_PRESS:
+      // Do something
+      // Play random combine soldier or metro police sound
+      break;
+
+    case BUTTON2_RELEASE:
+      // Do something
+      break;
+
+    case BUTTON3_PRESS:
+      // Do something
+      // Play random overwatch city or radio sound
+      break;
+
+    case BUTTON3_RELEASE:
+      // Do something
+      break;
+
+    default:
+      // Do something
+      break;
+    }
   }
 
-  // Serial.print("tmrpcm.isPlaying() = ");
-  // Serial.println(tmrpcm.isPlaying());
-
-
-
-  // delay(1000);
-  // toggle = !toggle;
-  // digitalWrite(LED_BUILTIN, toggle);
-  // digitalWrite(BARREL_LED, toggle);
-
-  // tmrpcm.play("test.wav"); // This sound file will play each loop
-  // tone(9, 440, 500);
+  // These code blocks will execute based on the trigger/button state all the time
+  if (trigger.state() == LOW) // Trigger pressed
+  {
+    if (!tmrpcm.isPlaying()) // Done playing last sound
+    {
+      // Update counter and play AR2 firing or reload sound
+    }
+  }
 }
