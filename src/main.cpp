@@ -3,13 +3,12 @@
 #include <TMRpcm.h> // also need to include this library...
 #include <SPI.h>
 #include <ButtonDebounce.h>
-#include <ButtonDebounce.h>
 
 #define SD_CARD_CS 4
-#define TRIGGER_IN 7 // Note that trigger and buttons are active low (1 = not pressed, 0 = pressed)
-#define BUTTON1_IN 8
-#define BUTTON2_IN 6
-#define BUTTON3_IN 5
+#define TRIGGER_IN 8 // Note that trigger and buttons are active low (1 = not pressed, 0 = pressed)
+#define BUTTON1_IN 7
+#define BUTTON2_IN 5
+#define BUTTON3_IN 6
 #define SPEAKER_OUT 9
 #define BARREL_LED 10
 #define DEBOUNCE_TIME 50
@@ -36,15 +35,17 @@ typedef enum StateChanges
   BUTTON3_RELEASE  // Button 3 released
 } States;
 
-File combine_soldier_dir;
+// File combine_soldier_dir;
 TMRpcm tmrpcm; // Create an object for use in this sketch
 ButtonDebounce trigger(TRIGGER_IN, DEBOUNCE_TIME);
 ButtonDebounce button1(BUTTON1_IN, DEBOUNCE_TIME);
 ButtonDebounce button2(BUTTON2_IN, DEBOUNCE_TIME);
 ButtonDebounce button3(BUTTON3_IN, DEBOUNCE_TIME);
-bool toggle = false;
+// bool toggle = false;
 bool stateChange = false; // Indicate a state change to the main code
 States currentState = NONE;
+String tempString;
+uint8_t shots = 30;
 
 String getFileName(String directory, String filePrefix, int fileNumber)
 {
@@ -139,7 +140,7 @@ void setup()
   // tmrpcm.setVolume(7); // Sets the volume (0 to 7)
 
   Serial.begin(9600); // Opens the serial port which is how you can type to the Arduino and it can respond
-  delay(100);
+  delay(1000);
   Serial.println("Welcome to AR2 Pulse Rifle!");
 
   if (!SD.begin(SD_CARD_CS)) // SD.begin tries to initialize the SD card for access. It returns true when it is properly initialized, and false when it fails, so !SD.begin is true when it fails
@@ -147,8 +148,9 @@ void setup()
     Serial.println("SD card initialization failed.");
   }
 
-  String tempString = getFileName(COMBINE_SOLDIER_DIR, String("cs"), random(CS_MAX) + 1);
+  tempString = getFileName(COMBINE_SOLDIER_DIR, String("cs"), random(CS_MAX) + 1);
   tmrpcm.play(tempString.c_str()); // This sound file will play each time the arduino powers up or is reset
+  Serial.println(tempString);
 }
 
 void loop()
@@ -162,45 +164,59 @@ void loop()
   // This code block lets you do something when there's a trigger/button state change
   if (stateChange)
   {
+    stateChange = false;
     switch (currentState)
     {
     case TRIGGER_PRESS:
       // Do something
+      Serial.println("trigger press");
       tmrpcm.stopPlayback(); // Stop whatever it's playing to begin firing and reloading
       digitalWrite(BARREL_LED, HIGH);
+      tempString = getFileName(COMBINE_SOLDIER_DIR, String("fire1"));
+      tmrpcm.play(tempString.c_str());
+      Serial.println(tempString);
       break;
 
     case TRIGGER_RELEASE:
       // Do something
       digitalWrite(BARREL_LED, LOW);
+      Serial.println("trigger release");
       break;
 
     case BUTTON1_PRESS:
       // Do something
       // Play altfire charging sound
+      Serial.println("Button 1 press");
       break;
 
     case BUTTON1_RELEASE:
       // Do something
       // Play altfire firing sound
+      Serial.println("Button 1 release");
       break;
 
     case BUTTON2_PRESS:
       // Do something
       // Play random combine soldier or metro police sound
+      tempString = getFileName(COMBINE_SOLDIER_DIR, String("cs"), random(CS_MAX) + 1);
+      tmrpcm.play(tempString.c_str());
+      Serial.println("Button 2 press");
       break;
 
     case BUTTON2_RELEASE:
       // Do something
+      Serial.println("Button 2 release");
       break;
 
     case BUTTON3_PRESS:
       // Do something
       // Play random overwatch city or radio sound
+      Serial.println("Button 3 press");
       break;
 
     case BUTTON3_RELEASE:
       // Do something
+      Serial.println("Button 3 release");
       break;
 
     default:
