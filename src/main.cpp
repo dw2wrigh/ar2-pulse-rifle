@@ -46,6 +46,7 @@ bool stateChange = false; // Indicate a state change to the main code
 States currentState = NONE;
 String tempString;
 uint8_t shots = 30;
+unsigned long timestamp;
 
 String getFileName(String directory, String filePrefix, int fileNumber)
 {
@@ -168,12 +169,28 @@ void loop()
     switch (currentState)
     {
     case TRIGGER_PRESS:
-      // Do something
-      Serial.println("trigger press");
       tmrpcm.stopPlayback(); // Stop whatever it's playing to begin firing and reloading
-      digitalWrite(BARREL_LED, HIGH);
-      tempString = getFileName(COMBINE_SOLDIER_DIR, String("fire1"));
-      tmrpcm.play(tempString.c_str());
+      Serial.println("trigger press");
+      while (currentState == TRIGGER_PRESS)
+      {
+        if(shots == 0)
+        {
+          tempString = getFileName(COMBINE_SOLDIER_DIR, String("reload2"));
+          tmrpcm.play(tempString.c_str());
+          while(tmrpcm.isPlaying()) {}
+          tempString = getFileName(COMBINE_SOLDIER_DIR, String("reload1"));
+          tmrpcm.play(tempString.c_str());
+          while(tmrpcm.isPlaying()) {}
+          shots = 30;
+        }
+        digitalWrite(BARREL_LED, HIGH);
+        tempString = getFileName(COMBINE_SOLDIER_DIR, String("fire1"));
+        tmrpcm.play(tempString.c_str());
+        timestamp = millis();
+        while(millis() - timestamp < 100) {}
+        shots -= 1;
+      }
+
       Serial.println(tempString);
       break;
 
@@ -211,6 +228,7 @@ void loop()
     case BUTTON3_PRESS:
       // Do something
       // Play random overwatch city or radio sound
+
       Serial.println("Button 3 press");
       break;
 
