@@ -41,7 +41,7 @@ ButtonDebounce trigger(TRIGGER_IN, DEBOUNCE_TIME);
 ButtonDebounce button1(BUTTON1_IN, DEBOUNCE_TIME);
 ButtonDebounce button2(BUTTON2_IN, DEBOUNCE_TIME);
 ButtonDebounce button3(BUTTON3_IN, DEBOUNCE_TIME);
-// bool toggle = false;
+bool toggle = false;
 bool stateChange = false; // Indicate a state change to the main code
 States currentState = NONE;
 String tempString;
@@ -156,6 +156,19 @@ void setup()
 
 void loop()
 {
+  // Debug routines
+  // This one beeps (loudly...) and blinks the on-board LED
+  // delay(1000);
+  // toggle = !toggle;
+  // digitalWrite(LED_BUILTIN, toggle);
+  // tone(9, 440, 500);
+  // This one plays random voice samples
+  // while(tmrpcm.isPlaying()) {}
+  // tempString = getFileName(COMBINE_SOLDIER_DIR, String("cs"), random(CS_MAX) + 1);
+  // tmrpcm.play(tempString.c_str()); // This sound file will play each time the arduino powers up or is reset
+  // Serial.println(tempString);
+  // delay(1000);
+
   // Required by the debounce procedures
   trigger.update();
   button1.update();
